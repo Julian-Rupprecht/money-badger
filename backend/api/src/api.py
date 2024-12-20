@@ -1,14 +1,16 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
+from flask import (
+    Blueprint, flash, g, redirect, render_template, request, session, url_for
+)
 
 app = Flask(__name__)
 
-
-@app.route("/")
-def hello_world():
-    return("<p>Backend</p>")
-
+@app.route("/api/signup", methods=['POST'])
+def sign_up():
+    return request.form
+    
 if __name__ == '__main__':
     app.run(debug=True)
