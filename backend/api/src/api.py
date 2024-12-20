@@ -11,6 +11,10 @@ app = Flask(__name__)
 @app.route("/api/signup", methods=['POST'])
 def sign_up():
     return request.form
+
+@app.route("/api/signin", methods=['POST'])
+def sign_in(): 
+    return request.form
     
 if __name__ == '__main__':
     app.run(debug=True)

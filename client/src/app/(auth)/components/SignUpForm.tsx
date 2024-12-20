@@ -35,7 +35,7 @@ export default function SignUpForm() {
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
-    } else if(email.value !== confirmEmail.value) {
+    } else if (email.value !== confirmEmail.value) {
       setConfirmEmailError(true);
       setConfirmEmailErrorMessage('Email addresses do not match.');
     } else {
@@ -47,7 +47,7 @@ export default function SignUpForm() {
 
     if (!password.value || password.value.length < 9 || !/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_])/.test(password.value)) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must contain atleast 9 characters, 1 uppercase letter, 1 number and 1 special character')
+      setPasswordErrorMessage('Password must contain atleast 9 characters, 1 uppercase letter, 1 number and 1 special character.')
     } else if (password.value !== confirmPassword.value) {
       setConfirmPasswordError(true);
       setConfirmPasswordErrorMessage('Passwords do not match.')
