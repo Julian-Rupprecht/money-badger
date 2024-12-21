@@ -22,8 +22,17 @@ export default function SignUpForm() {
       return; 
     }
 
-    const data = new FormData(event.currentTarget);
-    axios.post('/api/signup', data); 
+    const formData = new FormData(event.currentTarget);
+    let data: { [key: string]: FormDataEntryValue } = {};
+    formData.forEach((value: FormDataEntryValue, key: string) => {
+      data[key] = value; 
+    });
+
+    axios.post('/api/signup', JSON.stringify(data), {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
   }
   
   const validateInputs = () => {
