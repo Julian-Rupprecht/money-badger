@@ -10,5 +10,5 @@ class User(db.Model):
     last_name: Mapped[str] = mapped_column(String(100))
     email: Mapped[str] = mapped_column(String(255), unique=True)
     hash: Mapped[str] = mapped_column(String(255))
-    username: Mapped[str] = mapped_column(String(100), unique=True)
+    username: Mapped[str] = mapped_column(String(20), unique=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime, default=func.now())

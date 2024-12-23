@@ -4,6 +4,7 @@ import { TextField, Button, Typography, Checkbox, Link, FormControlLabel, Box } 
 import Grid from '@mui/material/Grid';
 import { useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpForm() {
   const [emailError, setEmailError] = useState<boolean>(false);
@@ -15,7 +16,9 @@ export default function SignUpForm() {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>('');
   const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = useState<string>('');
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const router = useRouter();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); 
 
     if(emailError || confirmEmailError || passwordError || confirmPasswordError) {
@@ -27,12 +30,21 @@ export default function SignUpForm() {
     formData.forEach((value: FormDataEntryValue, key: string) => {
       data[key] = value; 
     });
+    
+    try {
+      const response = await axios.post('/api/signup', JSON.stringify(data), {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
 
-    axios.post('/api/signup', JSON.stringify(data), {
-      headers: {
-        'Content-Type': 'application/json',
+      if (response.status == 200) {
+        router.push('/signin');
       }
-    });
+
+    } catch (error: unknown) {
+      console.error("error"); 
+    }
   }
   
   const validateInputs = () => {

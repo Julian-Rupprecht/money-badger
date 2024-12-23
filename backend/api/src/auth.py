@@ -1,33 +1,70 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify, redirect, request, make_response
+from werkzeug.security import check_password_hash
+from flask_jwt_extended import create_access_token
+from .utility import check_sign_up_input, check_sign_in_input
 from .db import db, User
-from werkzeug.security import check_password_hash, generate_password_hash
 
 auth_bp = Blueprint('auth', __name__)
+
+def get_request_data(*keys):
+    return {key: request.json.get(key) for key in keys}
+
+def create_response(message, statusCode):
+    return jsonify({"message": message}), statusCode
 
 @auth_bp.route("/api/signup", methods=["POST"])
 def sign_up():
 
-    # TODO do server side checking and input sanitization 
-    acceptTerms = request.json.get("accept-terms")
-    firstName = request.json.get("first-name")
-    lastName = request.json.get("last-name")
-    email = request.json.get("email")
-    confirmEmail = request.json.get("confirm-email")
-    password = request.json.get("password")
-    confirmPassword = request.json.get("confirm-password")
-    username = request.json.get("username")
-
-    hashedPassword = generate_password_hash(password)
-
-    user = User(
-        first_name=firstName,
-        last_name=lastName, 
-        email=email,
-        hash=hashedPassword,
-        username=username
+    data = get_request_data(
+        "accept-terms", "first-name", "last-name", "email", 
+        "confirm-email", "password", "confirm-password", "username"
     )
-
-    db.session.add(user)
-    db.session.commit()
     
-    return jsonify({"message": "User created successfully."}), 201
+    try:
+        print(data)
+        sanitizedUser = check_sign_up_input(
+            data["accept-terms"], 
+            data["first-name"], 
+            data["last-name"], 
+            data["email"],
+            data["confirm-email"], 
+            data["password"], 
+            data["confirm-password"], 
+            data["username"]
+        ) 
+
+        db.session.add(sanitizedUser)
+        db.session.commit()
+        return create_response("Successfully created account.", 200)
+    
+    except ValueError as exc: 
+        create_response("Invalid Input. Please check your data.", 400)
+    
+    except Exception as exc:
+        print(f"JA: {exc}")
+        return create_response("An error occurred. Please try again later.", 500)
+    
+ 
+@auth_bp.route("/api/signin", methods=["POST"])
+def sign_in():
+
+    data = get_request_data("email", "password")
+
+    try: 
+        sanitizedCredentials = check_sign_in_input(data["email"], data["password"])
+        hashedPassword = db.one_or_404(db.session.query(User.hash).filter(User.email == sanitizedCredentials["email"]))
+  
+        if check_password_hash(hashedPassword, sanitizedCredentials["password"]):
+            username = db.one_or_404(db.session.query(User.username).filter(User.email == sanitizedCredentials["email"]))
+            access_token = create_access_token(identity=username)
+            response = make_response(create_response("Success.", 200))
+            response.set_cookie('jwt', access_token, httponly=True, secure=False, samesite='Strict')
+            return response
+        else: 
+            return create_response("Invalid credentials.", 401)
+
+    except ValueError as exc:
+        return create_response("Invalid credentials.", 401)   
+
+    except Exception as exc:
+        return create_response("Invalid credentials.", 401)

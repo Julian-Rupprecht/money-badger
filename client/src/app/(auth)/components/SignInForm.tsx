@@ -4,7 +4,7 @@ import { TextField, Button, Typography, Link, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { useState } from 'react';
 import axios from 'axios';
-
+import { useRouter } from 'next/navigation';
 
 export default function SignInForm() {
   const [emailError, setEmailError] = useState<boolean>(false);
@@ -12,15 +12,35 @@ export default function SignInForm() {
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>('');
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const router = useRouter();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); 
 
     if (emailError || passwordError) {
       return; 
     } 
 
-    const data = new FormData(event.currentTarget);
-    axios.post('/api/signin', data)
+    const formData = new FormData(event.currentTarget);
+    const data: Record<string, FormDataEntryValue> = {};
+    formData.forEach((value: FormDataEntryValue, key: string) => {
+      data[key] = value; 
+    });
+    
+    try {
+      const response = await axios.post('/api/signin', JSON.stringify(data), {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (response.status == 200) {
+        router.push('/dashboard');
+      }
+
+    } catch (error: unknown) {
+      console.error(error); 
+    }
   }
 
   const validateInput = () => {
