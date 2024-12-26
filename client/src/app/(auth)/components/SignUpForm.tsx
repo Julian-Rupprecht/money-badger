@@ -2,11 +2,15 @@
 
 import { TextField, Button, Typography, Checkbox, Link, FormControlLabel, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 
-export default function SignUpForm() {
+export default function SignUpForm(props: {
+  setUsername: Dispatch<SetStateAction<string>>,
+  setEmail: Dispatch<SetStateAction<string>>,
+  setShowVerificationEmailPopUp: Dispatch<SetStateAction<boolean>>
+}
+) {
   const [emailError, setEmailError] = useState<boolean>(false);
   const [confirmEmailError, setConfirmEmailError] = useState<boolean>(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
@@ -15,8 +19,8 @@ export default function SignUpForm() {
   const [confirmPasswordError, setConfirmPasswordError] = useState<boolean>(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>('');
   const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = useState<string>('');
-
-  const router = useRouter();
+  const [usernameError, setUsernameError] = useState<boolean>(false);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState<string>('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); 
@@ -39,45 +43,87 @@ export default function SignUpForm() {
       });
 
       if (response.status == 200) {
-        router.push('/signin');
+        props.setUsername(data["username"] as string);
+        props.setEmail(data["email"] as string);
+        props.setShowVerificationEmailPopUp(true);
       }
 
     } catch (error: unknown) {
-      console.error("error"); 
+      console.error(error); 
     }
   }
   
-  const validateInputs = () => {
+  const validateInputs = async () => {
     const email = document.getElementById('email') as HTMLInputElement;
     const confirmEmail = document.getElementById('confirm-email') as HTMLInputElement;
     const password = document.getElementById('password') as HTMLInputElement;
     const confirmPassword = document.getElementById('confirm-password') as HTMLInputElement;
+    const username = document.getElementById('username') as HTMLInputElement; 
+    
+    const errors = {
+      emailError: false,
+      emailErrorMessage: '',
+      confirmEmailError: false,
+      confirmEmailErrorMessage: '',
+      passwordError: false,
+      passwordErrorMessage: '',
+      confirmPasswordError: false,
+      confirmPasswordErrorMessage: '',
+      usernameError: false,
+      usernameErrorMessage: ''
+    }
 
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
+      errors["emailError"] = true; 
+      errors["emailErrorMessage"] = 'Please enter a valid email address.';
     } else if (email.value !== confirmEmail.value) {
-      setConfirmEmailError(true);
-      setConfirmEmailErrorMessage('Email addresses do not match.');
-    } else {
-      setEmailError(false);
-      setConfirmEmailError(false); 
-      setEmailErrorMessage('');
-      setConfirmEmailErrorMessage('');
-    }
+      errors["confirmEmailError"] = true;
+      errors["confirmEmailErrorMessage"] = 'Email addresses do not match.';
+    } 
 
     if (!password.value || password.value.length < 9 || !/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_])/.test(password.value)) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must contain atleast 9 characters, 1 uppercase letter, 1 number and 1 special character.')
+      errors["passwordError"] = true;
+      errors["passwordErrorMessage"] = 'Password must contain atleast 9 characters, 1 uppercase letter, 1 number and 1 special character.';
     } else if (password.value !== confirmPassword.value) {
-      setConfirmPasswordError(true);
-      setConfirmPasswordErrorMessage('Passwords do not match.')
-    } else {
-      setPasswordError(false);
-      setConfirmPasswordError(false);
-      setPasswordErrorMessage('');
-      setConfirmPasswordErrorMessage('');
+      errors["confirmPasswordError"] = true;
+      errors["confirmPasswordErrorMessage"] = 'Passwords do not match.';
     }
+    
+    if (!errors["emailError"]) {
+      await axios.post("/api/available", JSON.stringify({email: email.value, username: username.value}), {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }).then(response => {
+        if (response.status == 200) {
+          const data = response.data; 
+
+          if (data["emailTaken"]) {
+            errors["emailError"] = true;
+            errors["emailErrorMessage"] = 'Email address already exists.';
+          }
+
+          if (data["usernameTaken"]) {
+            errors["usernameError"] = true;
+            errors["usernameErrorMessage"] = 'Username already exists.';
+          }
+
+        }
+      }).catch(error => {
+        console.error(error);
+      });
+    }
+
+    setEmailError(errors["emailError"]);
+    setEmailErrorMessage(errors["emailErrorMessage"]);
+    setConfirmEmailError(errors["confirmEmailError"]);
+    setConfirmEmailErrorMessage(errors["confirmEmailErrorMessage"]);
+    setPasswordError(errors["passwordError"]);
+    setPasswordErrorMessage(errors["passwordErrorMessage"]);
+    setConfirmPasswordError(errors["confirmPasswordError"]);
+    setConfirmPasswordErrorMessage(errors["confirmPasswordErrorMessage"]);
+    setUsernameError(errors["usernameError"]);
+    setUsernameErrorMessage(errors["usernameErrorMessage"]);
   }
 
   return (
@@ -154,6 +200,8 @@ export default function SignUpForm() {
         </Grid>
         <Grid item xs={12}>
           <TextField
+            error={usernameError}
+            helperText={usernameErrorMessage}
             required
             fullWidth
             id="username"
@@ -182,8 +230,7 @@ export default function SignUpForm() {
           fullWidth
           onClick={validateInputs}
           sx={{ 
-            mt: 3, 
-            borderRadius: 4
+            mt: 3
           }}
         >
           Sign Up

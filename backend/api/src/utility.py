@@ -1,4 +1,4 @@
-from .db import User
+from .db import User, db
 from werkzeug.security import generate_password_hash
 
 def check_sign_up_input(acceptTerms, firstName, lastName, email, confirmEmail, password, confirmPassword, username):
@@ -19,3 +19,9 @@ def check_sign_up_input(acceptTerms, firstName, lastName, email, confirmEmail, p
 def check_sign_in_input(email, password):
     # TODO input sanitization
     return {"email": email, "password": password}
+
+def check_username_exists(username: str):
+    return db.session.query(User.id).filter(User.username == username).first() is not None
+    
+def check_email_exists(email: str):
+    return db.session.query(User.id).filter(User.email == email).first() is not None 

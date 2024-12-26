@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, redirect, request, make_response
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import create_access_token
-from .utility import check_sign_up_input, check_sign_in_input
+from .utility import check_email_exists, check_sign_up_input, check_sign_in_input, check_username_exists
 from .db import db, User
 
 auth_bp = Blueprint('auth', __name__)
@@ -68,3 +68,21 @@ def sign_in():
 
     except Exception as exc:
         return create_response("Invalid credentials.", 401)
+
+
+@auth_bp.route("/api/available", methods=["POST"])
+def check_availability(): 
+
+    data = get_request_data("email", "username")
+    
+    try:
+        body = {
+            "emailTaken": check_email_exists(data["email"]),
+            "usernameTaken": check_username_exists(data["username"])
+        }
+
+        return make_response(body, 200)
+        
+    except Exception as exc:
+        print(exc)
+        return create_response("An error occured.", 400)
