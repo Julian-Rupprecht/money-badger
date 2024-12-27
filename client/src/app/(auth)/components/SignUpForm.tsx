@@ -25,11 +25,13 @@ export default function SignUpForm(props: {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); 
 
-    if(emailError || confirmEmailError || passwordError || confirmPasswordError) {
+    const isInputInvalid = await validateInputs(); 
+    if (isInputInvalid) {
       return; 
     }
 
-    const formData = new FormData(event.currentTarget);
+    const form = document.getElementById('signup-form') as HTMLFormElement;
+    const formData = new FormData(form);
     let data: { [key: string]: FormDataEntryValue } = {};
     formData.forEach((value: FormDataEntryValue, key: string) => {
       data[key] = value; 
@@ -124,11 +126,14 @@ export default function SignUpForm(props: {
     setConfirmPasswordErrorMessage(errors["confirmPasswordErrorMessage"]);
     setUsernameError(errors["usernameError"]);
     setUsernameErrorMessage(errors["usernameErrorMessage"]);
+  
+    return Object.values(errors).some(value => value === true);
   }
 
   return (
     <Box 
       component="form"
+      id="signup-form"
       onSubmit={handleSubmit}
     >
       <Grid container rowSpacing={2} columnSpacing={1}>
@@ -228,7 +233,6 @@ export default function SignUpForm(props: {
           type="submit" 
           variant="contained"
           fullWidth
-          onClick={validateInputs}
           sx={{ 
             mt: 3
           }}
