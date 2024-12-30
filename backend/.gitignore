@@ -1,2 +1,5 @@
+api/.venv
 api/.env
 api/src/__pycache__
+config.py
+api/src/logs.txt
