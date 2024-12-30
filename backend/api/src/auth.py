@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, redirect, request, make_response
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import create_access_token
 from .utility import check_email_exists, check_sign_up_input, check_sign_in_input, check_username_exists
-from .db import db, User
+from .db import db, User, BlacklistedTokenToken
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -55,8 +55,8 @@ def sign_in():
         hashedPassword = db.one_or_404(db.session.query(User.hash).filter(User.email == sanitizedCredentials["email"]))
   
         if check_password_hash(hashedPassword, sanitizedCredentials["password"]):
-            username = db.one_or_404(db.session.query(User.username).filter(User.email == sanitizedCredentials["email"]))
-            access_token = create_access_token(identity=username)
+            userID = db.one_or_404(db.session.query(User.id).filter(User.email == sanitizedCredentials["email"]))
+            access_token = create_access_token(identity=userID)
             response = make_response(create_response("Success.", 200))
             response.set_cookie('jwt', access_token, httponly=True, secure=False, samesite='Strict')
             return response
