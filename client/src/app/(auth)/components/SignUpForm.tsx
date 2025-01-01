@@ -223,7 +223,14 @@ export default function SignUpForm(props: {
           label={
             <Typography display="inline">
               {"I agree to the "}
-              <Link>general terms and conditions</Link>
+              <Link
+                sx={{ 
+                  color: "#180439",
+                  textDecorationColor: "#180439"
+                }}
+              >
+                general terms and conditions
+              </Link>
             </Typography>
           }
         />
@@ -234,10 +241,15 @@ export default function SignUpForm(props: {
           variant="contained"
           fullWidth
           sx={{ 
-            mt: 3
+            mt: 3,
+            borderRadius: 3,
+            backgroundColor: "#362f5a",
+            textTransform: "none"
           }}
-        >
-          Sign Up
+        > 
+          <Typography>
+            Sign Up  
+          </Typography>
         </Button>
       </Box>
     </Box>

@@ -27,11 +27,13 @@ export default function RootLayout({
         style={{
           margin: 0,
           padding: 0,
-          backgroundImage: "url('/images/mb-background-lm.jpg')",
-          backgroundSize: "cover",
+          backgroundImage: "url('/images/mb-background-lm-small.jpg')",
+          backgroundColor: "#dde0d9",
+          backgroundSize: "auto",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          minHeight: "100vh"
+          minHeight: "100vh",
+          minWidth: "100vw"
         }}
       >
         {children} 

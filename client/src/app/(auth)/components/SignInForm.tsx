@@ -97,12 +97,28 @@ export default function SignInForm() {
       </Grid>
       <Box display="flex" justifyContent="space-between" mt={1}>
         <Typography display="inline" fontSize={15}>
-          <Link href="/forgotpw">Forgot password?</Link>
+          <Link
+            href="/forgotpw"
+            sx={{ 
+              color: "#180439",
+              textDecorationColor: "#180439"
+            }}
+          >
+            Forgot password?
+          </Link>
         </Typography>
 
         <Typography display="inline" fontSize={15}>
           {"Don't have an account? "}
-          <Link href="/signup">Sign up</Link>
+          <Link 
+            href="/signup"
+            sx={{ 
+              color: "#180439",
+              textDecorationColor: "#180439"
+            }}
+          >
+            Sign up
+          </Link>
         </Typography>
       </Box>
       <Box display="flex" justifyContent="center">
@@ -112,11 +128,15 @@ export default function SignInForm() {
           onClick={validateInput}
           fullWidth
           sx={{ 
-            mt: 5, 
-            borderRadius: 4,
+            mt: 3,
+            borderRadius: 3,
+            backgroundColor: "#362f5a",
+            textTransform: "none"
           }}
         >
-          Log In
+          <Typography>
+            Log In  
+          </Typography>
         </Button>
       </Box>
     </Box>
