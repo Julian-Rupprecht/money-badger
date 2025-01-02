@@ -12,7 +12,16 @@ export default function VerifyEmailPopUp(props: {
   const router = useRouter(); 
 
   return (
-    <Paper>
+    <Paper
+      variant="outlined"
+      sx={{ 
+        p: 3, 
+        borderRadius: 3,
+        borderColor: "#180439",
+        backgroundColor: "#e2e4df",
+        boxShadow: 10
+      }}
+    >
       <Box
         display="flex"
         flexDirection="column"
@@ -22,12 +31,12 @@ export default function VerifyEmailPopUp(props: {
         mb={2}
       >
         <Box width="100%" display="flex" flexDirection="column" gap={1}>
-          <Typography variant="h4" fontWeight="bold">
+          <Typography variant="h4" fontWeight="bold" color="#180439">
             Verify your email
           </Typography>  
           <Typography>
             Hi {props.username}, Please verify your email address by clicking the link sent to {(' ')} 
-            <Typography component="span" fontWeight="bold">
+            <Typography component="span" fontWeight="bold" color="#180439">
               {props.email}
             </Typography>
           </Typography>
@@ -36,8 +45,10 @@ export default function VerifyEmailPopUp(props: {
           variant="contained" 
           fullWidth
           sx={{ 
-            mt: 4,
+            mt: 3,
             height: "50px",
+            borderRadius: 3,
+            backgroundColor: "#362f5a",
             textTransform: "none"
           }}
         >
@@ -53,10 +64,10 @@ export default function VerifyEmailPopUp(props: {
         >
           <Button 
             onClick={() => router.push("/signin")}
-            endIcon={<ExitToAppIcon />}
+            endIcon={<ExitToAppIcon sx={{ color: "#180439" }} />}
             sx={{ textTransform: "none" }}
           >
-            <Typography>
+            <Typography color="#180439">
               Go to sign in 
             </Typography>
           </Button>

@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, redirect, request, make_response
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import create_access_token
 from .utility import check_email_exists, check_sign_up_input, check_sign_in_input, check_username_exists
-from .db import db, User, BlacklistedTokenToken
+from .db import db, User, BlacklistedToken
 
 auth_bp = Blueprint('auth', __name__)
 
