@@ -11,6 +11,8 @@ export default function SignInForm() {
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>('');
+  const [credentialsError, setCredentialsError] = useState<boolean>(false);
+  const [credentialsErrorMessage, setCredentialsErrorMessage] = useState<string>('');
 
   const router = useRouter();
 
@@ -34,12 +36,15 @@ export default function SignInForm() {
         }
       });
 
-      if (response.status == 200) {
+      if (response.status === 200) {
+        setCredentialsError(false);
+        setCredentialsErrorMessage('')
         router.push('/dashboard');
       }
 
     } catch (error: unknown) {
-      console.error(error); 
+      setCredentialsError(true);
+      setCredentialsErrorMessage('Invalid Credentials. Please try again!');
     }
   }
 
@@ -121,14 +126,18 @@ export default function SignInForm() {
           </Link>
         </Typography>
       </Box>
-      <Box display="flex" justifyContent="center">
+      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" mt={3} gap={2}>
+        {credentialsError &&         
+          <Typography color="red">
+            {credentialsErrorMessage}
+          </Typography>
+        }
         <Button 
           type="submit" 
           variant="contained"
           onClick={validateInput}
           fullWidth
-          sx={{ 
-            mt: 3,
+          sx={{            
             borderRadius: 3,
             backgroundColor: "#362f5a",
             textTransform: "none"
