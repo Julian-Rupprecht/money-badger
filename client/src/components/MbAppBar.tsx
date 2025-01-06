@@ -1,4 +1,4 @@
-import { AppBar, Box, Container, Toolbar} from "@mui/material";
+import { AppBar, Box, Toolbar} from "@mui/material";
 import React from 'react';
 
 export default function MbAppBar({ children }: { children: React.ReactNode }) {

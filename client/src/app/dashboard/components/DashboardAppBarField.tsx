@@ -1,6 +1,6 @@
 import { Box, Button, Link, Typography } from "@mui/material";
 
-export default function SignInAndSignUpFieldAppBar() {
+export default function DashboardAppBarFields() {
   return (
     <Box
       display="flex"
@@ -11,12 +11,23 @@ export default function SignInAndSignUpFieldAppBar() {
       <Typography variant="h6">
         <Link 
           href="/signin" 
+          sx={{
+            color: "#180439",
+            textDecoration: "none",
+          }}
+        >
+          History
+        </Link>
+      </Typography>
+      <Typography variant="h6">
+        <Link 
+          href="/signin" 
           sx={{ 
             color: "#180439",
             textDecoration: "none",
           }}
         >
-          Sign in
+          Groups
         </Link>
       </Typography>
       <Button
@@ -29,16 +40,16 @@ export default function SignInAndSignUpFieldAppBar() {
       >
         <Typography variant="h6">
           <Link 
-            href="/signup" 
+            href="/account" 
             sx={{ 
               color: "white",
               textDecoration: "none",
             }}
           >
-          Sign up
-        </Link>
-      </Typography>
-    </Button>
+          Account
+          </Link>
+        </Typography>
+      </Button>
     </Box>
   );
 }
